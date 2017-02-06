@@ -1,0 +1,35 @@
+{
+    "name": "diradmin",
+    "version": "0.0.1",
+    "description": "DirAdmin - DirDB Admin",
+    "main": "index.js",
+    "scripts": {
+        "test": "node test.js"
+    },
+    "dependencies": {
+        "fast-stream": "~1.2.0",
+        "dirdb": "~1.0.3"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/RealTimeCom/diradmin.git"
+    },
+    "keywords": [
+        "db",
+        "database",
+        "dir",
+        "directory",
+        "storage",
+        "store",
+        "key",
+        "value",
+        "admin",
+        "http"
+    ],
+    "author": "Tanase Laurentiu Iulian <expertphp@gmail.com> (https://github.com/RealTimeCom)",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/RealTimeCom/diradmin/issues"
+    },
+    "homepage": "https://github.com/RealTimeCom/diradmin"
+}
