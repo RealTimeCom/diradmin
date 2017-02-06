@@ -1,6 +1,6 @@
 {
     "name": "diradmin",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "DirAdmin - DirDB Admin",
     "main": "index.js",
     "scripts": {
