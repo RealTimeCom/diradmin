@@ -9,8 +9,7 @@ f = { // cache static files
     'index.html': fs.readFileSync(s + 'index.html'),
     '404.html': fs.readFileSync(s + '404.html'),
     'favicon.ico': fs.readFileSync(s + 'favicon.ico'),
-    'admin.js': fs.readFileSync(s + 'admin.js'),
-    'load.js': fs.readFileSync(s + 'load.js')
+    'admin.js': fs.readFileSync(s + 'admin.js')
 };
 
 module.exports = function(db) {
@@ -21,7 +20,6 @@ module.exports = function(db) {
             '/': cb => cb(f['index.html']),
             '/favicon.ico': cb => cb(f['favicon.ico'], { 'Content-Type': 'image/x-icon' }),
             '/admin.js': cb => cb(f['admin.js'], { 'Content-Type': 'text/javascript; charset=UTF-8' }),
-            '/load.js': cb => cb(f['load.js'], { 'Content-Type': 'text/javascript; charset=UTF-8' }),
             // ajax, dynamic response:
             //'/test': cb => db.mkdir('auth', (e, d) => cb(e ? e.message : d))
             '/rootdir': cb => cb(db.d),
@@ -52,7 +50,6 @@ module.exports = function(db) {
             },
             '/keys': (cb, req) => {
                 if (req.query.dir && req.query.start && req.query.end) {
-                    console.log('range', req.query.dir, req.query.start, req.query.end);
                     const start = parseInt(req.query.start);
                     const end = parseInt(req.query.end);
                     db.keys(req.query.dir, { start: start, end: end }, (e, k) => {
