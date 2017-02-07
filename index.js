@@ -1,17 +1,31 @@
 /* SOURCE FILE - Copyright (c) 2017 diradmin - Tanase Laurentiu Iulian - https://github.com/RealTimeCom/diradmin */
 'use strict';
 
-const http = require('fast-stream'),
-    path = require('path');
+const fs = require('fs'),
+    sep = require('path').sep;
+
+const s = '.' + sep + 'src' + sep,
+txt = { 'Content-Type': 'text/plain; charset=UTF-8' },
+f = { // cache static files
+    'index.html': fs.readFileSync(s + 'index.html'),
+    '404.html': fs.readFileSync(s + '404.html'),
+    'favicon.ico': fs.readFileSync(s + 'favicon.ico'),
+    'admin.js': fs.readFileSync(s + 'admin.js'),
+    'load.js': fs.readFileSync(s + 'load.js')
+};
 
 module.exports = function(db) {
-    return {
-        404: cb => cb('<html><body><h3>Hello World!</h3></body></html>', null, 200),
+    return { // http host conf object
+        404: cb => cb(f['404.html'], null, 404),
         GET: {
-            '/': function(cb) {
-                db.mkdir('auth', (e, d) => cb(e ? e.message : d));
-            },
-            '/test': cb => db.mkdir('auth2', (e, d) => cb(e ? e.message : d))
+            // static files:
+            '/': cb => cb(f['index.html']),
+            '/favicon.ico': cb => cb(f['favicon.ico'], { 'Content-Type': 'image/x-icon' }),
+            '/admin.js': cb => cb(f['admin.js'], { 'Content-Type': 'text/javascript; charset=UTF-8' }),
+            '/load.js': cb => cb(f['load.js'], { 'Content-Type': 'text/javascript; charset=UTF-8' }),
+            // ajax, dynamic response:
+            //'/test': cb => db.mkdir('auth', (e, d) => cb(e ? e.message : d))
+            '/rootdir.txt': cb => cb(db.d, txt)
         }
-    }
+    };
 };

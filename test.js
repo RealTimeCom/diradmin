@@ -6,13 +6,11 @@
 const admin = require('./index.js'),
     net = require('net'), // or tls
     dirdb = require('dirdb'),
-    http = require('fast-stream'),
-    sep = require('path').sep,
-    fs = require('fs');
+    http = require('fast-stream');
 
 // server.js:
-const root = __dirname + sep + 'test';
-fs.mkdirSync(root); // make a test directory
+const root = __dirname + require('path').sep + 'test'; // test directory
+try { require('fs').mkdirSync(root); } catch (e) { } // make
 
 const db = new dirdb(root);
 
@@ -21,9 +19,9 @@ const config = {
     '*': admin(db)
 };
 
-require('net').createServer(
-    socket => socket.pipe(new http(config)).pipe(socket)
-).listen(80);
+net.createServer(socket => {
+    socket.pipe(new http(config)).pipe(socket);
+}).listen(80);
 
 /* Stream
 const client = db.client();

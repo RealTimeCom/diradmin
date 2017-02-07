@@ -6,10 +6,6 @@
     "scripts": {
         "test": "node test.js"
     },
-    "dependencies": {
-        "fast-stream": "~1.2.2",
-        "dirdb": "~1.0.3"
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/RealTimeCom/diradmin.git"
