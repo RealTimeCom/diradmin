@@ -1,31 +1,14 @@
 /* TEST FILE - Copyright (c) 2017 diradmin - Tanase Laurentiu Iulian - https://github.com/RealTimeCom/diradmin */
 'use strict';
 
+// rm -rf test | authbind node test.js
+
 const admin = require('./index.js'),
     net = require('net'), // or tls
     dirdb = require('dirdb'),
+    http = require('fast-stream'),
     sep = require('path').sep,
     fs = require('fs');
-
-// client.js:
-const src = 'src'; // source path directory
-const opt = { // optional, admin config
-    host: '*',
-    src: src,
-    cache: {
-        '404.html': fs.readFileSync(src + sep + '404.html'),
-        'index.html': fs.readFileSync(src + sep + 'index.html'),
-        'favicon.ico': fs.readFileSync(src + sep + 'favicon.ico'),
-        'admin.js': fs.readFileSync(src + sep + 'admin.js')
-    }
-};
-function httpAdmin(obj) { // obj: db | db.client()
-    net.createServer(socket => { // or tls
-        socket.pipe(new admin(obj, opt)).pipe(socket);
-    }).listen(80, function() {
-        console.log('HTTP server start', this.address());
-    });
-}
 
 // server.js:
 const root = __dirname + sep + 'test';
@@ -33,12 +16,19 @@ fs.mkdirSync(root); // make a test directory
 
 const db = new dirdb(root);
 
-httpAdmin(db);
+// client.js
+const config = {
+    '*': admin(db)
+};
+
+require('net').createServer(
+    socket => socket.pipe(new http(config)).pipe(socket)
+).listen(80);
 
 /* Stream
 const client = db.client();
 client.pipe(db.server()).pipe(client);
-httpAdmin(client);
+//admin(client);
 */
 /* Socket Stream
 const server = db.server();
@@ -52,7 +42,7 @@ net.createServer(socket => { // or tls
     net.connect(a.port, a.address, function() { // or tls
         this.pipe(client).pipe(this);
         console.log('DB client start');
-        httpAdmin(client);
+        //admin(client);
     }).once('end', () => console.log('DB client disconnected'));
 }).once('close', () => console.log('DB server close'));
 */

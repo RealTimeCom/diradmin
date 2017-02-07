@@ -1,13 +1,13 @@
 {
     "name": "diradmin",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "description": "DirAdmin - DirDB Admin",
     "main": "index.js",
     "scripts": {
         "test": "node test.js"
     },
     "dependencies": {
-        "fast-stream": "~1.2.0",
+        "fast-stream": "~1.2.2",
         "dirdb": "~1.0.3"
     },
     "repository": {
