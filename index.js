@@ -4,7 +4,7 @@
 const fs = require('fs'),
     sep = require('path').sep;
 
-const s = '.' + sep + 'src' + sep,
+const s = __dirname + sep + 'src' + sep,
 txt = { 'Content-Type': 'text/plain; charset=UTF-8' },
 f = { // cache static files
     'index.html': fs.readFileSync(s + 'index.html'),
