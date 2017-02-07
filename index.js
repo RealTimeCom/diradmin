@@ -36,7 +36,7 @@ module.exports = function(db) {
                         }
                     });
                 } else {
-                    cb(JSON.stringify({ e: 'dirname not found' }));
+                    cb(JSON.stringify({ e: 'invalid query' }));
                 }
             },
             '/rmdir': (cb, req) => {
@@ -47,18 +47,21 @@ module.exports = function(db) {
                         }
                     });
                 } else {
-                    cb(JSON.stringify({ e: 'dirname not found' }));
+                    cb(JSON.stringify({ e: 'invalid query' }));
                 }
             },
             '/keys': (cb, req) => {
-                if (req.query.dir) {
-                    db.keys(req.query.dir, (e, k) => {
+                if (req.query.dir && req.query.start && req.query.end) {
+                    console.log('range', req.query.dir, req.query.start, req.query.end);
+                    const start = parseInt(req.query.start);
+                    const end = parseInt(req.query.end);
+                    db.keys(req.query.dir, { start: start, end: end }, (e, k) => {
                         if (e) { cb(JSON.stringify({ e: e.message })); } else {
-                            cb(JSON.stringify({ d: req.query.dir, k: k }));
+                            cb(JSON.stringify({ d: req.query.dir, k: k, start: start, end: end }));
                         }
                     });
                 } else {
-                    cb(JSON.stringify({ e: 'dirname not found' }));
+                    cb(JSON.stringify({ e: 'invalid query' }));
                 }
             },
             '/put': (cb, req) => {
@@ -76,7 +79,7 @@ module.exports = function(db) {
                 if (req.query.dir && req.query.uid && req.query.hash) {
                     db.val(req.query.dir, req.query.uid, req.query.hash, (e, k, v) => {
                         if (e) { cb(JSON.stringify({ e: e.message })); } else {
-                            cb(JSON.stringify({ d: req.query.dir, uid: req.query.uid, k: k.toString(), v: v.toString() }));
+                            cb(JSON.stringify({ d: req.query.dir, uid: req.query.uid, k: k.slice(0, 20).toString(), v: v.slice(0, 20).toString() }));
                         }
                     });
                 } else {
