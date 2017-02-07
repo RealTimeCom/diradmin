@@ -3,11 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <title>DirAdmin</title>
+<style>
+span.link {
+    color: blue;
+    cursor: pointer
+}
+</style>
 <script src="/admin.js"></script>
 </head>
 <body>
 <h3>DirAdmin</h3>
-Root Directory: <div id="root">...</div>
+<div>Root Directory: <span id="root">...</span></div>
+<div>Dirname: <form style="display: inline" onsubmit="get('/mkdir?dir=' + encodeURIComponent(document.getElementById('mkdir').value), list); document.getElementById('mkdir').value = ''; return false;"><input type="text" id="mkdir"><input type="submit" value="Make"></form></div>
+<div>[ <span class="link" onclick="get('/list', list)">Dir List</span> ]</div>
+<div id="list"></div>
 </body>
 <script src="/load.js"></script>
 </html>

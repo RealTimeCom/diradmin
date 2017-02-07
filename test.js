@@ -20,7 +20,7 @@ const config = {
 };
 
 net.createServer(socket => {
-    socket.pipe(new http(config)).pipe(socket);
+    socket.pipe(new http(config, { ranges: false })).pipe(socket);
 }).listen(80);
 
 /* Stream
