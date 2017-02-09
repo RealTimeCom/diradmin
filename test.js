@@ -14,13 +14,16 @@ try { require('fs').mkdirSync(root); } catch (e) { } // make
 
 const db = new dirdb(root);
 
+const client = db.client();
+client.pipe(db.server()).pipe(client);
+
 // client.js
 const config = {
     '*': admin(db)
 };
 
 net.createServer(socket => {
-    socket.pipe(new http(config, { ranges: false })).pipe(socket);
+    socket.pipe(new http(config)).pipe(socket); // , { ranges: false }
 }).listen(80);
 
 /* Stream

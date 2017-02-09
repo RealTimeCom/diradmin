@@ -74,9 +74,26 @@ module.exports = function(db) {
             },
             '/val': (cb, req) => {
                 if (req.query.dir && req.query.uid && req.query.hash) {
+                    console.log('val-rq', req.query.dir, req.query.uid, req.query.hash);
                     db.val(req.query.dir, req.query.uid, req.query.hash, (e, k, v) => {
                         if (e) { cb(JSON.stringify({ e: e.message })); } else {
+                            console.log('val-cb', { d: req.query.dir, uid: req.query.uid, k: k.slice(0, 20).toString(), v: v.slice(0, 20).toString() });
                             cb(JSON.stringify({ d: req.query.dir, uid: req.query.uid, k: k.slice(0, 20).toString(), v: v.slice(0, 20).toString() }));
+                        }
+                    });
+                } else {
+                    cb(JSON.stringify({ e: 'invalid query' }));
+                }
+            },
+            '/del': (cb, req) => {
+                if (req.query.dir && req.query.uid && req.query.hash) {
+                    db.val(req.query.dir, req.query.uid, req.query.hash, (e, k) => {
+                        if (e) { cb(JSON.stringify({ e: e.message })); } else {
+                            db.del(req.query.dir, k, e => {
+                                if (e) { cb(JSON.stringify({ e: e.message })); } else {
+                                    cb(JSON.stringify({ d: req.query.dir }));
+                                }
+                            });
                         }
                     });
                 } else {

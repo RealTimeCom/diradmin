@@ -29,22 +29,25 @@ function list(txt) {
         var bd, bk, doc = document.getElementById('list');
         doc.innerHTML = ''; // reset
         for (var k in r.r) {
-            bd = '<span class="link" onclick="if (confirm(\'Are you sure?\')) { get(\'/rmdir?dir=\' + encodeURIComponent(\'' + k + '\'), list); }">del</span>';
+            bd = '<span class="link" onclick="if (confirm(\'Delete dir < ' + k + ' > ?\')) { get(\'/rmdir?dir=\' + encodeURIComponent(\'' + k + '\'), list); }">del</span>';
             bk = '<span class="link" onclick="keys(\'' + k + '\', 0, 5)">keys</span>';
             doc.innerHTML += '<div>[ ' + bd + ' | ' + bk + ' ] <b>' + k + '</b> ' + JSON.stringify(r.r[k]) + '</div>';
         }
     } else if (r.k && r.d && typeof r.start === 'number' && typeof r.end === 'number') {
-        var doc = document.getElementById('list');
+        var bd, count = 0, doc = document.getElementById('list');
         doc.innerHTML = '<div>Dir: <b>' + r.d + '</b></div><div>Range: ' + r.start + ' - ' + r.end + '</div>'; // reset
         for (var uid in r.k) {
-            doc.innerHTML += '<div><span id="' + uid + '"></span>' + uid + ' <span style="color: green">||</span> ' + r.k[uid] + '</div>';
+            count++;
+            bd = '<span class="link" onclick="if (confirm(\'Delete key < ' + uid + ' > ?\')) { get(\'/del?dir=\' + encodeURIComponent(\'' + r.d + '\') + \'&uid=\' + encodeURIComponent(\'' + uid + '\') + \'&hash=\' + encodeURIComponent(\'' + r.k[uid] + '\'), range); }">del</span>';
+            doc.innerHTML += '<div>[ ' + bd + ' ] <span id="' + uid + '"></span>' + uid + ' <span style="color: green">||</span> ' + r.k[uid] + '</div>';
             get('/val?dir=' + encodeURIComponent(r.d) + '&uid=' + encodeURIComponent(uid) + '&hash=' + encodeURIComponent(r.k[uid]), val);
         }
         doc.innerHTML += '<div>';
         if (r.start >= 5) {
             doc.innerHTML += '<span class="link" onclick="keys(\'' + r.d + '\', ' + (r.start - 5) + ', ' + (r.end - 5) + ')">< Back</span>';
         }
-        if (Object.keys(r.k).length === 5) {
+        if (count === 5) {
+            if (r.start >= 5) { doc.innerHTML += ' | '; }
             doc.innerHTML += '<span class="link" onclick="keys(\'' + r.d + '\', ' + (r.start + 5) + ', ' + (r.end + 5) + ')">Next ></span>';
         }
         doc.innerHTML += '</div>';
@@ -54,13 +57,13 @@ function list(txt) {
     }
 }
 function keysub(dir) {
-    get('/put?dir=' + encodeURIComponent(dir) + '&key=' + encodeURIComponent(document.getElementById('key').value) + '&val=' + encodeURIComponent(document.getElementById('val').value), put);
+    get('/put?dir=' + encodeURIComponent(dir) + '&key=' + encodeURIComponent(document.getElementById('key').value) + '&val=' + encodeURIComponent(document.getElementById('val').value), range);
     document.getElementById('key').value = '';
     document.getElementById('val').value = '';
     return false;
 }
 
-function put(txt) {
+function range(txt) {
     try {
         var r = JSON.parse(txt);
     } catch (e) {
