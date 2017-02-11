@@ -13,7 +13,7 @@ const admin = require('./index.js'),
 const root = __dirname + require('path').sep + 'test'; // test directory
 try { fs.mkdirSync(root); } catch (e) {} // make
 
-const sock = '/tmp/sevrer.sock';
+const sock = '.db.server.sock';
 try { fs.unlinkSync(sock); } catch (e) {}
 
 const db = new dirdb(root);
