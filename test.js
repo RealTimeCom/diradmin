@@ -6,44 +6,65 @@
 const admin = require('./index.js'),
     net = require('net'), // or tls
     dirdb = require('dirdb'),
-    http = require('fast-stream');
+    http = require('fast-stream'),
+    fs = require('fs');
 
 // server.js:
 const root = __dirname + require('path').sep + 'test'; // test directory
-try { require('fs').mkdirSync(root); } catch (e) { } // make
+try { fs.mkdirSync(root); } catch (e) {} // make
+
+const sock = '/tmp/sevrer.sock';
+try { fs.unlinkSync(sock); } catch (e) {}
 
 const db = new dirdb(root);
 
-const client = db.client();
-client.pipe(db.server()).pipe(client);
+function config(client) {
+    return {
+        '*': admin(client)
+    };
+}
+/*
+// const cf = config(db);
+net.createServer(socket => { // create HTTP server, listen PORT 80 or 443 ( if tls )
+
+    const client = db.client();
+    client.pipe(db.server()).pipe(client); // dummy stream test
+
+    socket.
+    on('error', e => console.log('error', e)).
+    pipe(new http(config(client))). // config(client)) if is stream, or cf for db core ( delete client pipe )
+    pipe(socket);
+
+}).listen(80, function() {
+    console.log('HTTP server start', this.address());
+});
+*/
+
+// create DB .sock server, or change to IP:PORT
+net.createServer(socket => socket.pipe(db.server()).pipe(socket)). // net or tls
+listen(sock, function() {
+    console.log('DB server start', this.address());
+    startAdmin();
+});
 
 // client.js
-const config = {
-    '*': admin(db)
-};
+function startAdmin(client) {
+    net.createServer(socket => { // net or tls, create HTTP server, listen PORT 80 or 443 ( if tls )
 
-net.createServer(socket => {
-    socket.pipe(new http(config)).pipe(socket); // , { ranges: false }
-}).listen(80);
+        net.connect(sock, function() { // net or tls, client connect to DB .sock server, or change to IP:PORT
 
-/* Stream
-const client = db.client();
-client.pipe(db.server()).pipe(client);
-//admin(client);
-*/
-/* Socket Stream
-const server = db.server();
-const client = db.client();
-net.createServer(socket => { // or tls
-    socket.pipe(server).pipe(socket);
-}).listen('dirdb.sock', function() { // socket file | port
-    const a = this.address();
-    console.log('DB server start', a);
-    // client.js:
-    net.connect(a.port, a.address, function() { // or tls
-        this.pipe(client).pipe(this);
-        console.log('DB client start');
-        //admin(client);
-    }).once('end', () => console.log('DB client disconnected'));
-}).once('close', () => console.log('DB server close'));
-*/
+            console.log('DB client connected');
+            const client = db.client();
+            this.pipe(client).pipe(this);
+
+            socket.
+            on('error', e => console.log('error', e)).
+            pipe(new http(config(client))).
+            pipe(socket);
+
+        }).once('end', () => console.log('DB client disconnected'));
+
+    }).listen(80, function() {
+        console.log('HTTP server start', this.address());
+    });
+}
