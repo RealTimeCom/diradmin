@@ -1,13 +1,13 @@
 function get(url, cb) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             console.log(this.responseText);
             cb(this.responseText);
         }
     };
-    xhttp.open('GET', url, true);
-    xhttp.send();
+    xhr.open('GET', url, true);
+    xhr.send();
     return false;
 }
 

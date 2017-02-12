@@ -18,9 +18,9 @@ try { fs.unlinkSync(sock); } catch (e) {}
 
 const db = new dirdb(root);
 
-function config(client) {
+function config(cli) {
     return {
-        '*': admin(client)
+        '*': admin(cli)
     };
 }
 /*
@@ -60,6 +60,7 @@ function startAdmin(client) {
             socket.
             on('error', e => console.log('error', e)).
             pipe(new http(config(client))).
+            on('httpError', e => console.log('httpError', e)).
             pipe(socket);
 
         }).once('end', () => console.log('DB client disconnected'));
